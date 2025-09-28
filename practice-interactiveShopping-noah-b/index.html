@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="script.js"></script>
     <title>Interactive Shopping List</title>
 </head>
 <body>
@@ -17,14 +16,25 @@
     <h2>Enter Items Here</h2>
 
     <!-- input field -->
-    <label for="item-field">Add Item:</label> 
-    <input type="text" id="item-field" name="item-field" placeholder="Enter item here" required>
+    <form>
 
-    <!-- button to add items to list -->
-    <button type="submit" name="add-item">Add Item</button>
+        <label for="item-field">Add Item:</label> 
+        <input type="text" id="item-field" name="item-field" placeholder="Enter item here" action="/script.js" method="get" required>
+
+        <!-- button to add items to list -->
+        <button type="submit" name="add-item" id="add-item">Add Item</button>
+
+    </form>
 
     <!-- unordered list to display items -->
-     <h3>Shopping List:</h3>
+    <h3>Shopping List</h3>
+    
+    <ul>
+    
+    </ul>
 
+    <!-- JS is at the bottom of body element so HTML elements load first -->
+    <script src="script.js"></script>
+    
 </body>
 </html>
