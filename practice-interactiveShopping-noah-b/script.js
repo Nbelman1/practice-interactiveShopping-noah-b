@@ -1,110 +1,95 @@
+// script.js
 
-// 2. Core Features:
-//     ● Add Items:
-//     ○ When the user enters text in the input field and clicks the "Add"
-//     button, a new list item is added to the.
+// variables in global scope 
+const unorderedList = document.querySelector("ul");
+const addItemButton = document.getElementById("add-item");
+const itemField = document.getElementById("item-field");
 
-    const unorderedList = document.querySelector("ul");
-    const addItemButton = document.getElementById("add-item");
-    const itemField = document.getElementById("item-field");
-    let listItem = ""; // define variables on top of functions for global scope
-    let textSpan = "";
-    let userInput = ""; 
+addItemButton.addEventListener("click", function(event) { // clicking the button fires event
+    event.preventDefault(); // stops page from reloading when button is pressed
+    
+    const userInput = itemField.value; // stores user input in userInput variable
+    if (!userInput) return; // stops function if input is empty
 
-    addItemButton.addEventListener("click", function(event) { // clicking the button fires event
-        event.preventDefault(); // stops page reload when button is pressed
-        
-        userInput = itemField.value; // stores user input in userInput variable
+    createListItem(userInput);
+});
 
-        function createListItem(userInput) { // create functions to keep code DRY
-            textSpan = document.createElement("span");
-            listItem = document.createElement("li"); 
-            textSpan.innerHTML = userInput; // 
-            listItem.appendChild(textSpan); // makes li a parent of span
-            unorderedList.appendChild(listItem); // makes li a parent of ul
+function createListItem(text) { // use functions to keep code DRY
+    const textSpan = document.createElement("span");
+    const listItem = document.createElement("li"); 
 
-            createRemoveButton(listItem);
-            createEditButton(listItem);
+    textSpan.textContent = text; // fills span with user input - use span for easier formatting
+    listItem.appendChild(textSpan); // makes li a parent of span
+    unorderedList.appendChild(listItem); // makes ul a parent of li
 
-            return listItem;
-        }
+    const removeButton = createRemoveButton(listItem); // creates Remove Item button
+    const editButton = createEditButton(textSpan); // creates Edit Item button
 
-        function createRemoveButton(listItem) { 
-            const removeItemButton = document.createElement("button"); // create element
-            removeItemButton.setAttribute("type", "button"); // add attributes
-            removeItemButton.setAttribute("name", "remove-item");
-            removeItemButton.setAttribute("class", "remove-item");
-            removeItemButton.textContent = "Remove Item"; // add label
-            listItem.appendChild(removeItemButton); // append button to list item
-            
-            removeItemButton.addEventListener("click", function() {
-                listItem.remove(); // remove list item from list
-            });
+    listItem.appendChild(removeButton); // appends buttons to li
+    listItem.appendChild(editButton);
 
-            return removeItemButton; // button retains event listener
-        }
-        
-        // add Edit Item button
-        function createEditButton(listItem) {
-            const editItemButton = document.createElement("button"); // create element
-            editItemButton.setAttribute("type", "button"); // add attributes
-            editItemButton.setAttribute("name", "edit-item");
-            editItemButton.setAttribute("class", "edit-item");
-            editItemButton.textContent = "Edit Item"; // add label
-            listItem.appendChild(editItemButton); // append button to list item
+    return listItem; // keeps elements' hierarchy when returning
+}
 
-            createEditEventListener(listItem, textSpan, editItemButton);
-            return editItemButton;
-        }
+function createRemoveButton(listItem) { 
+    const removeItemButton = document.createElement("button"); // create element
 
-        // TODO: fix edit event listener - button currently does nothing when pressed
-        // TODO: figure out how to incorporate createEditButton and createRemoveButton functions inside of the event handler
-
-        function createEditEventListener(listItem, textSpan, editItemButton) {
-            // when Edit Item button is clicked...
-            editItemButton.addEventListener("click", function() {
-                // create text input for new list item
-                const editButtonInput = document.createElement("input"); // create input
-                listItem = document.createElement("li");
-                editButtonInput.setAttribute("type", "text"); 
-                editButtonInput.setAttribute("name", "edit-input");
-                editButtonInput.setAttribute("placeholder", "Enter new item");
-                textSpan.replaceWith(editButtonInput); // delete text span (which contains list item), insert text input field
-
-                // change the "edit" button to a "save" button
-                const saveItemButton = document.createElement("button");
-                saveItemButton.setAttribute("name", "save-item");
-                saveItemButton.setAttribute("type", "button");
-                saveItemButton.setAttribute("class", "save-item");
-                saveItemButton.textContent = "Save Item";
-                editItemButton.replaceWith(saveItemButton);
-            }
-        )}
-
-            // when Save Item button is clicked...
-            // saveItemButton.addEventListener("click", function() {
-            //     createListItem();
-            //     createRemoveButton();
-            // })
-
-        
-
-        createListItem(userInput);
-        
+    removeItemButton.setAttribute("type", "button"); // add attributes
+    removeItemButton.setAttribute("class", "remove-item");
+    removeItemButton.textContent = "Remove Item"; // add label
+    
+    removeItemButton.addEventListener("click", function() {
+        listItem.remove(); // delete list item and buttons
     });
 
-//     ○ Each list item should include:
-//     ■ The item text.
-//     ■ A "Remove" button to delete the item.
-//     ■ A "Edit" button to modify the item text.
-//     ● Remove Items:
-//     ○ When the "Remove" button is clicked, the corresponding list item is
-//     deleted from the.
-//     ● Edit Items:
-//     ○ When the "Edit" button is clicked:
-//     1
-//     ■ Replace the item text with an input field containing the current
-//     text.
-//     ■ Change the "Edit" button to a "Save" button.
-//     ■ When "Save" is clicked, update the text with the new input value
-//     and revert the button back to "Edit".
+    return removeItemButton; // button retains event listener
+}
+    
+
+function createEditButton(textSpan) {
+    const editItemButton = document.createElement("button"); // create element
+
+    editItemButton.setAttribute("type", "button"); // add attributes
+    editItemButton.setAttribute("class", "edit-item");
+    editItemButton.textContent = "Edit Item"; // add label
+
+    editItemButton.addEventListener("click", function() {
+        const editInput = replaceListItem(textSpan);
+        createSaveButton(editItemButton, editInput); 
+    })
+
+    return editItemButton;
+}
+
+function replaceListItem(textSpan) {
+    const editInput = document.createElement("input"); // create text input
+
+    editInput.setAttribute("type", "text"); // add attributes
+    editInput.setAttribute("class", "edit-input");
+    editInput.setAttribute("name", "edit-input");
+    editInput.setAttribute("placeholder", "Enter item here");
+
+    textSpan.replaceWith(editInput);
+
+    return editInput;
+}
+
+function createSaveButton(editItemButton, editInput) {
+    const saveButton = document.createElement("button");
+
+    saveButton.setAttribute("type", "button");
+    saveButton.setAttribute("class", "save-item");
+    saveButton.textContent = "Save Item";
+
+    editItemButton.replaceWith(saveButton);
+
+    saveButton.addEventListener("click", function() {
+        const savedValue = editInput.value;
+        const savedSpan = document.createElement("span");
+
+        savedSpan.textContent = savedValue; // fills span with user input 
+        editInput.replaceWith(savedSpan);
+
+        saveButton.replaceWith(createEditButton(savedSpan));
+    });
+}
